@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, redirect, flash, render_template, url_for, Blueprint
 import json, requests
 from types import SimpleNamespace
+import urllib.request
 
 bp = Blueprint('home', __name__)
 
@@ -8,6 +9,17 @@ bp = Blueprint('home', __name__)
 @bp.route('/home')
 def index():
     return "liz"
+
+
+@bp.route('/chart')
+def chart():
+    url = 'https://api.dccresource.com/api/games'
+    data = urllib.request.urlopen(url).read().decode()
+    obj = json.loads(data)
+    obj_zero = obj[0]
+    yr_fame = obj_zero['year']
+    yr_fame_str = str(yr_fame)
+    return yr_fame_str
 
 
 @bp.route('/games')
@@ -59,10 +71,12 @@ def games():
 
     for console_dict in game_and_console_data:
         for game in game_list:
-            if console_dict['platform'] == game.platform:
-                console_dict['games'] += 1
+            game_release = int(game.year)
+            if game_release >= 2013:
+                if console_dict['platform'] == game.platform:
+                    console_dict['games'] += 1
 
-    data_two = game_and_console_data[20]
+    data_two = game_and_console_data[25]
     data_two_ct = data_two['games']
     str_data_two = str(data_two_ct)
     return str_data_two
