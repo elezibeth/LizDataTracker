@@ -16,10 +16,46 @@ def chart():
     url = 'https://api.dccresource.com/api/games'
     data = urllib.request.urlopen(url).read().decode()
     obj = json.loads(data)
-    obj_zero = obj[0]
-    yr_fame = obj_zero['year']
-    yr_fame_str = str(yr_fame)
-    return yr_fame_str
+    # get only games released 2013 or later
+    lst2013 = []
+    list_unknown_year = []
+    for ob in obj:
+        if ob['year'] is None:
+            list_unknown_year.append(ob)
+        elif ob['year'] >= 2013:
+            lst2013.append(ob)
+    # find unique platforms
+    unique_platforms = []
+    for game in lst2013:
+        platform = game['platform']
+        if platform not in unique_platforms:
+            pltform_string = str(platform)
+            my_platform_dictionary = {
+                'platform': pltform_string,
+                'games': 0
+            }
+            unique_platforms.append(my_platform_dictionary)
+    # get count of games for each platform fro post 2013 list
+    games_per_platform = []
+    for pl in unique_platforms:
+        x = pl['platform']
+        for g in lst2013:
+            if g['platform'] == x:
+                pl['games'] += 1
+
+    # create array for charting
+    chart_array_game_count = []
+    label = []
+    for d in unique_platforms:
+        val = d['platform']
+        label.append(val)
+        number_of_games = d['games']
+        chart_array_game_count.append(number_of_games)
+
+    labels = label
+    values = chart_array_game_count
+
+    return render_template("chart.html", labels=labels, values=values)
 
 
 @bp.route('/games')
@@ -80,3 +116,33 @@ def games():
     data_two_ct = data_two['games']
     str_data_two = str(data_two_ct)
     return str_data_two
+
+
+@bp.route('/yearsort')
+def yearsort():
+    url = 'https://api.dccresource.com/api/games'
+    data = urllib.request.urlopen(url).read().decode()
+    obj = json.loads(data)
+    obj_zero = obj[0]
+    yr_fame = obj_zero['year']
+    yr_fame_str = str(yr_fame)
+    return yr_fame_str
+
+@bp.route('/gamedetails')
+def gamedetails():
+    if request.method == 'POST':
+        search = request.form['search']
+        error = None
+
+    if not search:
+        error = 'You must enter a game title'
+    if error is not None:
+        flash(error)
+    elif request.form['search'] == 'see all' :
+        return  redirect(url_for('home.index'))
+    else:
+        return render_template('home/gamedetails.html')
+    # else:
+    # return 'hi'
+            # render_template('sample/postform.html', page_title="PostForm from Module Function")
+

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'base.html' %}
+
+{% block header %}
+<h1 style="text-align: center">{% block title %} games {% end block %}</h1>
+{% end block%}
+
+{% block content %}
+
+
+
+
+{% end block %}
+
+  <form method="post">
+    <label for="title">Enter a Title</label>
+    <input name="title" id="title" value="{{ request.form['title'] }}" required>
+    <input type="submit" value="Submit">
+  </form>
