@@ -5,22 +5,6 @@ from types import SimpleNamespace
 bp = Blueprint('home', __name__)
 
 
-@bp.route('/')
-def index():
-    data = [
-        (1, 1999),
-        (2, 1998),
-        (3, 1957)
-    ]
-    # labels on x axis of chart, values on y axis of chart
-
-    labels = [row[0] for row in data]
-    values = [row[1] for row in data]
-    return render_template(games.html, labels=labels, values=values)
-
-    return '/'
-
-
 @bp.route('/home')
 def index():
     return "liz"
@@ -28,31 +12,57 @@ def index():
 
 @bp.route('/games')
 def games():
-    response = requests.get('https://api.dccresource.com/api/games').text
-    return response
+    url = 'https://api.dccresource.com/api/games'
+    # response = requests.get('https://api.dccresource.com/api/games').json(
+    resp = requests.get(url)
+    game_list = json.loads(resp.content, object_hook=lambda d: SimpleNamespace(**d))
+    game_titles = []
+    for gamess in game_list:
+        game_titles.append(gamess.name)
+    game_names = []
+    for t in game_titles:
+        u = t.__str__()
+        game_names.append(u)
+    game_count = 0
+    for t in game_titles:
+        game_count += 1
+    gsc = str(game_count)
+    # game count is 16598
+    game_consoles = []
+    unique_game_consoles = []
+    for game in game_list:
+        game_consoles.append(game.platform)
+    for cons in game_consoles:
+        if cons not in unique_game_consoles:
+            unique_game_consoles.append(cons)
+    game_consoles_count = len(unique_game_consoles)
+    u_g_c_str = str(game_consoles_count)
+    # 31 unique game consoles
+    game_and_console_data = []
+    for platform in unique_game_consoles:
+        pltform_string = str(platform)
+        my_dictionary = {
+            'games': 0,
+            'platform': pltform_string
+        }
+        game_and_console_data.append(my_dictionary)
+    # my_len = len(game_and_console_data)
+    # my_len_st = str(my_len)
+    # return my_len_st
+    # result = 31
 
+    # data_one = game_and_console_data[2]
+    # data_one['games'] = 10
+    # data_one_string = str(data_one['games'])
+    # return data_one_string
+    # returns 10
 
-@bp.route('/chart')
-def chart():
-    response = requests.get('https://api.dccresource.com/api/games').json()
-    platforms = []
-    for line in response:
-        platform = (x['platform'] for x in response)
-        platforms.append(platform)
+    for console_dict in game_and_console_data:
+        for game in game_list:
+            if console_dict['platform'] == game.platform:
+                console_dict['games'] += 1
 
-    unique_platforms = []
-
-    for x in platforms:
-        if x not in unique_platforms:
-            unique_platforms.append(x)
-
-    quantities = []
-    game_sys_lists = []
-
-    for line in unique_platforms:
-        if game_sys_lists.count() != 0:
-            quantities.append(game_sys_lists)
-        game_sys_lists.clear()
-        for game in response:
-            platform = (x['platform'] for x in response == line)
-            game_sys_lists.append(platform)
+    data_two = game_and_console_data[20]
+    data_two_ct = data_two['games']
+    str_data_two = str(data_two_ct)
+    return str_data_two
