@@ -34,39 +34,38 @@ def chart():
         'games': 1
     }
     unique_platforms.append(my_platform_dictionary)
-    for game in lst2013:
-        platform = game['platform']
-        for gme in unique_platforms:
-            if gme['platform'] == platform:
-                f = 1
-            elif gme['platform'] != platform:
-                f = 0
-            if f == 0:
-                 pltform_string = str(platform)
-                 my_platform_dictionary = {
-                     'platform': pltform_string,
-                     'games': 0
-                 }
-                 unique_platforms.append(my_platform_dictionary)
-    # get count of games for each platform fro post 2013 list
-    games_per_platform = []
-    for pl in unique_platforms:
-        x = pl['platform']
+    platform_names = []
+
+    for g in lst2013:
+        h = g['platform']
+        i = str(h)
+        platform_names.append(i)
+
+    u_plt = []
+
+    for n in platform_names:
+        if n not in u_plt:
+            u_plt.append(n)
+
+    ct_gms_by_plt = []
+    for p in u_plt:
+        ndict = {
+            'count': 0,
+            'platform': p
+        }
+        ct_gms_by_plt.append(ndict)
+
+    for p in ct_gms_by_plt:
         for g in lst2013:
-            if g['platform'] == x:
-                pl['games'] += 1
+            if g['platform'] == p['platform']:
+                p['count'] += 1
 
     # create array for charting
-    chart_array_game_count = []
-    label = []
-    for d in unique_platforms:
-        val = d['platform']
-        label.append(val)
-        number_of_games = d['games']
-        chart_array_game_count.append(number_of_games)
-
-    labels = label
-    values = chart_array_game_count
+    values = []
+    labels = u_plt
+    for c in ct_gms_by_plt:
+        number_of_games = c['count']
+        values.append(number_of_games)
 
     return render_template("home/chart.html", labels=labels, values=values)
 
@@ -141,6 +140,7 @@ def yearsort():
     yr_fame_str = str(yr_fame)
     return yr_fame_str
 
+
 @bp.route('/gamedetails')
 def gamedetails():
     if request.method == 'POST':
@@ -151,11 +151,10 @@ def gamedetails():
         error = 'You must enter a game title'
     if error is not None:
         flash(error)
-    elif request.form['search'] == 'see all' :
-        return  redirect(url_for('home.index'))
+    elif request.form['search'] == 'see all':
+        return redirect(url_for('home.index'))
     else:
         return render_template('home/gamedetails.html')
     # else:
     # return 'hi'
-            # render_template('sample/postform.html', page_title="PostForm from Module Function")
-
+    # render_template('sample/postform.html', page_title="PostForm from Module Function")
