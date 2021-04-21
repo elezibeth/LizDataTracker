@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% end block %}</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
 </head>
 <body>
 <header>
-    {% block header %}{%end block%}
+    {% block header %}{% endblock %}
 </header>
-    {% block content %}{% end block %}
+    {% block content %}{% endblock %}
 </body>
 </html>

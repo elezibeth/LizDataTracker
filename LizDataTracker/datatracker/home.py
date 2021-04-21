@@ -26,15 +26,28 @@ def chart():
             lst2013.append(ob)
     # find unique platforms
     unique_platforms = []
+    first_console = lst2013[0]
+    first_console1 = first_console['platform']
+    first_console_str = str(first_console1)
+    my_platform_dictionary = {
+        'platform': first_console_str,
+        'games': 1
+    }
+    unique_platforms.append(my_platform_dictionary)
     for game in lst2013:
         platform = game['platform']
-        if platform not in unique_platforms:
-            pltform_string = str(platform)
-            my_platform_dictionary = {
-                'platform': pltform_string,
-                'games': 0
-            }
-            unique_platforms.append(my_platform_dictionary)
+        for gme in unique_platforms:
+            if gme['platform'] == platform:
+                f = 1
+            elif gme['platform'] != platform:
+                f = 0
+            if f == 0:
+                 pltform_string = str(platform)
+                 my_platform_dictionary = {
+                     'platform': pltform_string,
+                     'games': 0
+                 }
+                 unique_platforms.append(my_platform_dictionary)
     # get count of games for each platform fro post 2013 list
     games_per_platform = []
     for pl in unique_platforms:
@@ -55,7 +68,7 @@ def chart():
     labels = label
     values = chart_array_game_count
 
-    return render_template("chart.html", labels=labels, values=values)
+    return render_template("home/chart.html", labels=labels, values=values)
 
 
 @bp.route('/games')

@@ -1,87 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% end block %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
-</head>
-<body>
-<header>
-    {% block header %}{%end block%}
-</header>
-    <canvas id="line" width="900" height="400"></canvas>
-    <script>
-        var ctx = document.getElementById("lineChart").getContext("2d");
-        var lineChart = new Chart(ctx{
-        labels:{{ labels | safe }}
-        datasets: [
-            {
-                label: "Data points",
-                data: {{ values | safe }},
-                fill = false,
-                lineTension: 0.2
-            }
-          ]
-        },
-        options:{
-        responsive: false
-        }
-
-    });
-
-    </script>
-    {% block content %}{% end block %}
+{% extends 'base.html' %}
 
 
-{% block header %}
-<h1 style="text-align: center">{% block title %} games {% end block %}</h1>
-{% end block%}
+
+{% block header %}{%endblock%}
 
 {% block content %}
 
+    <canvas id="lineChart" width="900" height="400"></canvas>
+    <script>
+        var ctx = document.getElementById("lineChart").getContext("2d");
+        var lineChart = new Chart(ctx, {
+            labels:{{ labels | safe }},
+            datasets: [
+                {
+                    label: "Games Sold per Console since 2013",
+                    data: {{ values | safe }},
+                    fill: false,
+                    lineTension: 0.2
+                }
+            ]
+        });
+
+    </script>
+
+{%endblock%}
 
 
 
 
-{% end block %}
-<canvas id="myChart" width="400" height="400"></canvas>
-<script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-</script>
-</body>
+
+
+
