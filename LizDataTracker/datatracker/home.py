@@ -290,41 +290,40 @@ def globalsalesbyconsole():
     game_objects = json.loads(data)
     games_after2013_year = []
 
+# scrub data without year info
     for game in game_objects:
         if game['year'] is not None:
             if game['year'] >= 2013:
             games_after2013_year.append(game)
 
-    unique_platforms = []
-    first_console = games_after2013_year[0]
-    first_console1 = first_console['platform']
-    first_console_str = str(first_console1)
-    my_platform_dictionary = {
-        'platform': first_console_str,
-        'games': 1
-    }
-    unique_platforms.append(my_platform_dictionary)
+
+    # get platform names
     platform_names = []
 
-    for g in lst2013:
+    for g in games_after2013_year:
         h = g['platform']
         i = str(h)
         platform_names.append(i)
 
-    platform_names.append(first_console_str)
-
-    # create dictionary for each console name
-    platform_dictionary_li = []
+    #get unique platform names
+    unique_platform_names = []
     for p in platform_names:
+        if str(p['platform']) not in unique_platform_names:
+            unique_platform_names.append(p)
+
+
+
+    # create dictionary for each unique console name
+    platform_dictionary_li = []
+    for p in unique_platform_names:
         platform_dictionary = {
             'platform': p,
             'globalSales': 0
-
         }
         platform_dictionary_li.append(platform_dictionary)
 
     #for each platform name, sort games into list
-    #for each list, iterate through list and edit global sales on platform dictionary
+    #for each list, iterate through list and edit global sales on platform dictionary in platform_dictionary_li
 
     for name in platform_names:
         game_list = sorted(games_after2013_year, key=lambda f: f['platform'] == name)
@@ -341,6 +340,8 @@ def globalsalesbyconsole():
     for platform in platform_dictionary_li:
         labels.append(str(platform['platform']))
         data.append(platform['globalSales'])
+
+    # return labels and data to html for chart making
 
     render_template('home/globalsalesbyconsole.html', labels=labels, values=data)
 
