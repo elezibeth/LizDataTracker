@@ -5,10 +5,13 @@
 {% block header %}{%endblock%}
 
 {% block content %}
+{{ error }}
+
+
 <p>Search for a game to see details.</p>
 
   <form method="post">
-    <label for="title">Enter a Game Title</label>
+    <label for="search">Enter a Game Title</label>
     <input name="search" id="search" value="{{ request.form['search'] }}" required>
     <input type="submit" value="Submit">
   </form>

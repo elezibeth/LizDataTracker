@@ -251,35 +251,80 @@ def play():
 
     return render_template('home/play.html', labels=c, values=values)
 
+@bp.route('/search')
+def presearch():
+    error = "Search for a game by title"
+    return render_template('home/search.html', error=error)
 
-@bp.route('/play', methods=('GET', 'POST'))
+
+@bp.route('/search', methods=('GET', 'POST'))
 def search():
-    game = ''
     if request.method == 'POST':
-        game = str(request.form('search'))
+        game = request.form['search']
+        if game is not None:
+            url = 'https://api.dccresource.com/api/games'
+            data = urllib.request.urlopen(url).read().decode()
+            obj = json.loads(data)
 
-    url = 'https://api.dccresource.com/api/games'
-    data = urllib.request.urlopen(url).read().decode()
-    obj = json.loads(data)
-    s_obj = sorted(obj, key=lambda e: e['name'])
-    found_items = []
-    for s in s_obj:
-        if s['name'] == game:
-            found_items.append(s)
+            found_items = []
+            for s in obj:
+                if s['name'] == game:
+                    found_items.append(s)
 
-    if len(found_items) > 1:
-        for item in found_items:
-            pass
+                if len(found_items) == 0:
+                    error = "No games matched your search. Please try again."
+                    flash(error)
+                    return render_template('home/search.html', error=error)
+                if len(found_items) == 1:
+                    for item in found_items:
+                        game_id = item['_id']
+                        url = 'https://api.dccresource.com/api/games' + game_id
+                        data = urllib.request.urlopen(url).read().decode()
+                        game_for_details = json.loads(data)
+                        id_of_game = "Game Id:" + game_for_details['_id']
+                        game_rank = "Rank:" + str(game_for_details['rank'])
+                        page_title_game_name = "Game name: " + game_for_details['name']
+                        game_platform = "Platform: " + game_for_details['platform']
+                        year_game = "Year: " + str(game_for_details['year'])
+                        genre_game = "Genre: " + game_for_details['genre']
+                        game_publisher = "Publisher: " + game_for_details['publisher']
+                        na_sales_game = "North America Sales in millions: " + str(game_for_details['naSales'])
+                        game_eu_sales = "European Sales in millions: " + str(game_for_details['euSales'])
+                        game_japan_sales = "Japan Sales in Millions: " + str(game_for_details['jpSales'])
+                        other_game_sales = "Other Sales: " + str(game_for_details['otherSales'])
+                        global_game_sales = "Global Sales: " + str(game_for_details['globalSales'])
+                        game_version = "Version: " + str(game_for_details['__v'])
+                        game_details_list = [id_of_game, game_rank, game_platform, year_game, genre_game, game_publisher,
+                                         na_sales_game, game_eu_sales, game_japan_sales, other_game_sales,
+                                         global_game_sales, game_version]
+                        return render_template('home/search.html', data=game_details_list, title=page_title_game_name)
+                else:
+                    item = found_items[0]
+                    game_id = item['_id']
+                    url = 'https://api.dccresource.com/api/games' + game_id
+                    data = urllib.request.urlopen(url).read().decode()
+                    game_for_details = json.loads(data)
+                    id_of_game = "Game Id:" + game_for_details['_id']
+                    game_rank = "Rank:" + str(game_for_details['rank'])
+                    page_title_game_name = "Game name: " + game_for_details['name']
+                    game_platform = "Platform: " + game_for_details['platform']
+                    year_game = "Year: " + str(game_for_details['year'])
+                    genre_game = "Genre: " + game_for_details['genre']
+                    game_publisher = "Publisher: " + game_for_details['publisher']
+                    na_sales_game = "North America Sales in millions: " + str(game_for_details['naSales'])
+                    game_eu_sales = "European Sales in millions: " + str(game_for_details['euSales'])
+                    game_japan_sales = "Japan Sales in Millions: " + str(game_for_details['jpSales'])
+                    other_game_sales = "Other Sales: " + str(game_for_details['otherSales'])
+                    global_game_sales = "Global Sales: " + str(game_for_details['globalSales'])
+                    game_version = "Version: " + str(game_for_details['__v'])
+                    game_details_list = [id_of_game, game_rank, game_platform, year_game, genre_game, game_publisher,
+                                     na_sales_game, game_eu_sales, game_japan_sales, other_game_sales,
+                                     global_game_sales, game_version]
+                    return render_template('home/search.html', data=game_details_list, title=page_title_game_name)
 
-    game = found_items[0]
-    game_id = str(game['id'])
-
-    # "endpoint":"api/games/<OBJECTID>
-    url = 'https://api.dccresource.com/api/games/' + game_id
-    data = urllib.request.urlopen(url).read().decode()
-    obj_two = json.loads(data)
-
-    # return render_template('home/search.html', name=name, platform=platform)
+    else:
+        error = "GoDebug"
+        return render_template('home/search.html', error=error)
 
 
 @bp.route('/globalsalesbyconsole')
@@ -329,8 +374,6 @@ def globalsalesbyconsole():
                 platform_dictionary = dict(platform=name, globalSales=global_sales_count)
                 platform_dictionary_list.append(platform_dictionary)
 
-
-
     # sort dictionaries by sales numbers for pretty graphs :).
     platform_dictionary_li_s = sorted(platform_dictionary_list, key=lambda f: f['globalSales'])
 
@@ -345,3 +388,23 @@ def globalsalesbyconsole():
     # return labels and data to html for chart making
 
     return render_template('home/globalsalesbyconsole.html', labels=labels, values=data)
+
+
+@bp.route('/search', methods=('GET', 'POST'))
+def searchgame():
+    if request.method == 'POST':
+        page_title = request.form['title']
+        error = None
+
+        if not page_title:
+            error = 'You must enter a title'
+
+        if error is not None:
+            flash(error)
+        elif request.form['title'] == "go home":
+            return redirect(url_for('sample.index'))
+        else:
+            return render_template('sample/postform.html', page_title=page_title)
+
+    else:
+        return render_template('sample/postform.html', page_title="PostForm from Module Function")
