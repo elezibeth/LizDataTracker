@@ -70,8 +70,7 @@ def chart():
         values.append(number_of_games)
     for d in s_ct_gms_by_plt:
         label = d['platform']
-        st_label = str(label)
-        labels.append(st_label)
+        labels.append(label)
 
     return render_template("home/chart.html", labels=labels, values=values)
 
@@ -294,7 +293,7 @@ def globalsalesbyconsole():
     for game in game_objects:
         if game['year'] is not None:
             if game['year'] >= 2013:
-            games_after2013_year.append(game)
+                games_after2013_year.append(game)
 
 
     # get platform names
