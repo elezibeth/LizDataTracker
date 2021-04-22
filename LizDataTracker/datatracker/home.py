@@ -230,6 +230,7 @@ def equestion():
 
     return render_template("home/chart.html", labels=labels, values=values)
 
+
 @bp.route('/play')
 def play():
     a = 'hello'
@@ -250,3 +251,34 @@ def play():
     values.append(v)
 
     return render_template('home/play.html', labels=c, values=values)
+
+
+@bp.route('/play', methods=('GET', 'POST'))
+def search():
+    game = ''
+    if request.method == 'POST':
+        game = str(request.form('search'))
+
+    url = 'https://api.dccresource.com/api/games'
+    data = urllib.request.urlopen(url).read().decode()
+    obj = json.loads(data)
+    s_obj = sorted(obj, key=lambda e: e['name'])
+    found_items = []
+    for s in s_obj:
+        if s['name'] == game:
+            found_items.append(s)
+
+    if len(found_items) > 1:
+        for item in found_items:
+            pass
+
+    game = found_items[0]
+    game_id = str(game['id'])
+
+    # "endpoint":"api/games/<OBJECTID>
+    url = 'https://api.dccresource.com/api/games/' + game_id
+    data = urllib.request.urlopen(url).read().decode()
+    obj_two = json.loads(data)
+
+    return render_template('home/search.html', name=name, platform=platform)
+

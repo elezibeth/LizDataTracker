@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+
+{% block header %}{%endblock%}
+
+{% block content %}
+<p>Search for a game to see details.</p>
+
+  <form method="post">
+    <label for="title">Enter a Game Title</label>
+    <input name="search" id="search" value="{{ request.form['search'] }}" required>
+    <input type="submit" value="Submit">
+  </form>
+
+
+{%endblock%}
