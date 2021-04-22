@@ -15,6 +15,16 @@
     <input name="search" id="search" value="{{ request.form['search'] }}" required>
     <input type="submit" value="Submit">
   </form>
+<div>
+ 
+  {% for word in data %}
+  <div>
+    {{ word }}
+  </div>
+
+   {% endfor %}
+
+</div>
 
 
 {%endblock%}

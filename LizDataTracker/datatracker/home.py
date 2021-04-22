@@ -251,6 +251,7 @@ def play():
 
     return render_template('home/play.html', labels=c, values=values)
 
+
 @bp.route('/search')
 def presearch():
     error = "Search for a game by title"
@@ -271,39 +272,17 @@ def search():
                 if s['name'] == game:
                     found_items.append(s)
 
-                if len(found_items) == 0:
-                    error = "No games matched your search. Please try again."
-                    flash(error)
-                    return render_template('home/search.html', error=error)
-                if len(found_items) == 1:
-                    for item in found_items:
-                        game_id = item['_id']
-                        url = 'https://api.dccresource.com/api/games' + game_id
-                        data = urllib.request.urlopen(url).read().decode()
-                        game_for_details = json.loads(data)
-                        id_of_game = "Game Id:" + game_for_details['_id']
-                        game_rank = "Rank:" + str(game_for_details['rank'])
-                        page_title_game_name = "Game name: " + game_for_details['name']
-                        game_platform = "Platform: " + game_for_details['platform']
-                        year_game = "Year: " + str(game_for_details['year'])
-                        genre_game = "Genre: " + game_for_details['genre']
-                        game_publisher = "Publisher: " + game_for_details['publisher']
-                        na_sales_game = "North America Sales in millions: " + str(game_for_details['naSales'])
-                        game_eu_sales = "European Sales in millions: " + str(game_for_details['euSales'])
-                        game_japan_sales = "Japan Sales in Millions: " + str(game_for_details['jpSales'])
-                        other_game_sales = "Other Sales: " + str(game_for_details['otherSales'])
-                        global_game_sales = "Global Sales: " + str(game_for_details['globalSales'])
-                        game_version = "Version: " + str(game_for_details['__v'])
-                        game_details_list = [id_of_game, game_rank, game_platform, year_game, genre_game, game_publisher,
-                                         na_sales_game, game_eu_sales, game_japan_sales, other_game_sales,
-                                         global_game_sales, game_version]
-                        return render_template('home/search.html', data=game_details_list, title=page_title_game_name)
-                else:
-                    item = found_items[0]
-                    game_id = item['_id']
-                    url = 'https://api.dccresource.com/api/games' + game_id
-                    data = urllib.request.urlopen(url).read().decode()
-                    game_for_details = json.loads(data)
+            if len(found_items) == 0:
+                error = "No games matched your search. Please try again."
+                flash(error)
+                return render_template('home/search.html', error=error)
+            if len(found_items) == 1:
+                for item in found_items:
+                    # game_id = item['_id']
+                    # game_id_st = str(game_id)
+                    # url = ('https://api.dccresource.com/api/games' + game_id_st)
+                    # data = urllib.request.urlopen(url).read().decode()
+                    game_for_details = item
                     id_of_game = "Game Id:" + game_for_details['_id']
                     game_rank = "Rank:" + str(game_for_details['rank'])
                     page_title_game_name = "Game name: " + game_for_details['name']
@@ -318,9 +297,32 @@ def search():
                     global_game_sales = "Global Sales: " + str(game_for_details['globalSales'])
                     game_version = "Version: " + str(game_for_details['__v'])
                     game_details_list = [id_of_game, game_rank, game_platform, year_game, genre_game, game_publisher,
+                                         na_sales_game, game_eu_sales, game_japan_sales, other_game_sales,
+                                         global_game_sales, game_version]
+                    return render_template('home/search.html', data=game_details_list, title=page_title_game_name)
+            else:
+                item = found_items[0]
+                game_id = item['_id']
+                url = 'https://api.dccresource.com/api/games' + game_id
+                data = urllib.request.urlopen(url).read().decode()
+                game_for_details = json.loads(data)
+                id_of_game = "Game Id:" + game_for_details['_id']
+                game_rank = "Rank:" + str(game_for_details['rank'])
+                page_title_game_name = "Game name: " + game_for_details['name']
+                game_platform = "Platform: " + game_for_details['platform']
+                year_game = "Year: " + str(game_for_details['year'])
+                genre_game = "Genre: " + game_for_details['genre']
+                game_publisher = "Publisher: " + game_for_details['publisher']
+                na_sales_game = "North America Sales in millions: " + str(game_for_details['naSales'])
+                game_eu_sales = "European Sales in millions: " + str(game_for_details['euSales'])
+                game_japan_sales = "Japan Sales in Millions: " + str(game_for_details['jpSales'])
+                other_game_sales = "Other Sales: " + str(game_for_details['otherSales'])
+                global_game_sales = "Global Sales: " + str(game_for_details['globalSales'])
+                game_version = "Version: " + str(game_for_details['__v'])
+                game_details_list = [id_of_game, game_rank, game_platform, year_game, genre_game, game_publisher,
                                      na_sales_game, game_eu_sales, game_japan_sales, other_game_sales,
                                      global_game_sales, game_version]
-                    return render_template('home/search.html', data=game_details_list, title=page_title_game_name)
+                return render_template('home/search.html', data=game_details_list, title=page_title_game_name)
 
     else:
         error = "GoDebug"
