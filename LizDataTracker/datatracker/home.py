@@ -60,12 +60,18 @@ def chart():
             if g['platform'] == p['platform']:
                 p['count'] += 1
 
+    s_ct_gms_by_plt = sorted(ct_gms_by_plt, key=lambda a: a['count'])
+
     # create array for charting
     values = []
-    labels = u_plt
-    for c in ct_gms_by_plt:
+    labels = []
+    for c in s_ct_gms_by_plt:
         number_of_games = c['count']
         values.append(number_of_games)
+    for d in s_ct_gms_by_plt:
+        label = d['platform']
+        st_label = str(label)
+        labels.append(st_label)
 
     return render_template("home/chart.html", labels=labels, values=values)
 
