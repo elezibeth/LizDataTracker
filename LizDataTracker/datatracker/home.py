@@ -280,5 +280,74 @@ def search():
     data = urllib.request.urlopen(url).read().decode()
     obj_two = json.loads(data)
 
-    return render_template('home/search.html', name=name, platform=platform)
+    # return render_template('home/search.html', name=name, platform=platform)
+
+@bp.route('/globalsalesbyconsole')
+def globalsalesbyconsole():
+
+    url = 'https://api.dccresource.com/api/games'
+    data = urllib.request.urlopen(url).read().decode()
+    game_objects = json.loads(data)
+    games_after2013_year = []
+
+    for game in game_objects:
+        if game['year'] is not None:
+            if game['year'] >= 2013:
+            games_after2013_year.append(game)
+
+    unique_platforms = []
+    first_console = games_after2013_year[0]
+    first_console1 = first_console['platform']
+    first_console_str = str(first_console1)
+    my_platform_dictionary = {
+        'platform': first_console_str,
+        'games': 1
+    }
+    unique_platforms.append(my_platform_dictionary)
+    platform_names = []
+
+    for g in lst2013:
+        h = g['platform']
+        i = str(h)
+        platform_names.append(i)
+
+    platform_names.append(first_console_str)
+
+    # create dictionary for each console name
+    platform_dictionary_li = []
+    for p in platform_names:
+        platform_dictionary = {
+            'platform': p,
+            'globalSales': 0
+
+        }
+        platform_dictionary_li.append(platform_dictionary)
+
+    #for each platform name, sort games into list
+    #for each list, iterate through list and edit global sales on platform dictionary
+
+    for name in platform_names:
+        game_list = sorted(games_after2013_year, key=lambda f: f['platform'] == name)
+        global_sales_count = 0
+        for game in game_list:
+                global_sales_count += game['globalSales']
+                this_dictionary = sorted(platform_dictionary_li, key=lambda x: x['platform'] == name)
+                this_dictionary['globalSales'] = global_sales_count
+
+    # assign keys to a list
+    # assign data count to list
+    labels = []
+    data = []
+    for platform in platform_dictionary_li:
+        labels.append(str(platform['platform']))
+        data.append(platform['globalSales'])
+
+    render_template('home/globalsalesbyconsole.html', labels=labels, values=data)
+
+
+
+
+
+
+
 
