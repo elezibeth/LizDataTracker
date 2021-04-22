@@ -164,3 +164,89 @@ def gamedetails():
     # else:
     # return 'hi'
     # render_template('sample/postform.html', page_title="PostForm from Module Function")
+
+
+@bp.route('/equestion')
+def equestion():
+    url = 'https://api.dccresource.com/api/games'
+    data = urllib.request.urlopen(url).read().decode()
+    obj = json.loads(data)
+    # get only games released 2013 or later
+    lst2013 = []
+    list_unknown_year = []
+    for ob in obj:
+        if ob['year'] is None:
+            list_unknown_year.append(ob)
+        elif ob['year'] >= 2013:
+            lst2013.append(ob)
+    # find unique platforms
+    unique_platforms = []
+    first_console = lst2013[0]
+    first_console1 = first_console['platform']
+    first_console_str = str(first_console1)
+    my_platform_dictionary = {
+        'platform': first_console_str,
+        'games': 1
+    }
+    unique_platforms.append(my_platform_dictionary)
+    platform_names = []
+
+    for g in lst2013:
+        h = g['platform']
+        i = str(h)
+        platform_names.append(i)
+
+    u_plt = []
+
+    for n in platform_names:
+        if n not in u_plt:
+            u_plt.append(n)
+
+    ct_gms_by_plt = []
+    for p in u_plt:
+        ndict = {
+            'count': 0,
+            'platform': p
+        }
+        ct_gms_by_plt.append(ndict)
+
+    for p in ct_gms_by_plt:
+        for g in lst2013:
+            if g['platform'] == p['platform']:
+                p['count'] += 1
+
+    s_ct_gms_by_plt = sorted(ct_gms_by_plt, key=lambda a: a['count'])
+
+    # create array for charting
+    values = []
+    labels = []
+    for c in s_ct_gms_by_plt:
+        number_of_games = c['count']
+        values.append(number_of_games)
+    for d in s_ct_gms_by_plt:
+        label = d['platform']
+        st_label = str(label)
+        labels.append(st_label)
+
+    return render_template("home/chart.html", labels=labels, values=values)
+
+@bp.route('/play')
+def play():
+    a = 'hello'
+    b = 'world'
+    d = 'play'
+    c = []
+    c.append(a)
+    c.append(b)
+    c.append(d)
+    values = []
+    v = 2
+    values.append(v)
+    v = 4
+    values.append(v)
+    v = 6
+    values.append(v)
+    v = 9
+    values.append(v)
+
+    return render_template('home/play.html', labels=c, values=values)
