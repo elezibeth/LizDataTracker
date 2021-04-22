@@ -328,16 +328,22 @@ def globalsalesbyconsole():
     for name in platform_names:
         game_list = sorted(games_after2013_year, key=lambda f: f['platform'] == name)
         global_sales_count = 0
+        game_list_count = len(game_list)
         for game in game_list:
                 global_sales_count += game['globalSales']
-                this_dictionary = sorted(platform_dictionary_li, key=lambda x: x['platform'] == name)
-                this_dictionary['globalSales'] = global_sales_count
+                game_list_count -= 1
+                if game_list_count == 0:
+                    this_dictionary = sorted(platform_dictionary_li, key=lambda x: x['platform'] == name)
+                    this_dictionary['globalSales'] = global_sales_count
+
+    #sort dictionaries by sales numbers for pretty graphs :).
+    platform_dictionary_li_s = sorted(platform_dictionary_li, key=lambda f: f['globalSales'])
 
     # assign keys to a list
     # assign data count to list
     labels = []
     data = []
-    for platform in platform_dictionary_li:
+    for platform in platform_dictionary_li_s:
         labels.append(str(platform['platform']))
         data.append(platform['globalSales'])
 
