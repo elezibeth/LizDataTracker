@@ -281,20 +281,19 @@ def search():
 
     # return render_template('home/search.html', name=name, platform=platform)
 
+
 @bp.route('/globalsalesbyconsole')
 def globalsalesbyconsole():
-
     url = 'https://api.dccresource.com/api/games'
     data = urllib.request.urlopen(url).read().decode()
     game_objects = json.loads(data)
     games_after2013_year = []
 
-# scrub data without year info
+    # scrub data without year info
     for game in game_objects:
         if game['year'] is not None:
             if game['year'] >= 2013:
                 games_after2013_year.append(game)
-
 
     # get platform names
     platform_names = []
@@ -304,56 +303,45 @@ def globalsalesbyconsole():
         i = str(h)
         platform_names.append(i)
 
-    #get unique platform names
+    # get unique platform names
     unique_platform_names = []
     for p in platform_names:
-        if str(p['platform']) not in unique_platform_names:
+        if p not in unique_platform_names:
             unique_platform_names.append(p)
 
-
-
     # create dictionary for each unique console name
-    platform_dictionary_li = []
-    for p in unique_platform_names:
-        platform_dictionary = {
-            'platform': p,
-            'globalSales': 0
-        }
-        platform_dictionary_li.append(platform_dictionary)
+    platform_dictionary_list = []
+    # for each platform name, sort games into list
+    # for each list, iterate through list and edit global sales on platform dictionary in platform_dictionary_li
+    game_list = []
 
-    #for each platform name, sort games into list
-    #for each list, iterate through list and edit global sales on platform dictionary in platform_dictionary_li
-
-    for name in platform_names:
-        game_list = sorted(games_after2013_year, key=lambda f: f['platform'] == name)
+    for name in unique_platform_names:
+        game_list.clear()
+        for game in games_after2013_year:
+            if name == game['platform']:
+                game_list.append(game)
         global_sales_count = 0
         game_list_count = len(game_list)
         for game in game_list:
-                global_sales_count += game['globalSales']
-                game_list_count -= 1
-                if game_list_count == 0:
-                    this_dictionary = sorted(platform_dictionary_li, key=lambda x: x['platform'] == name)
-                    this_dictionary['globalSales'] = global_sales_count
+            global_sales_count += game['globalSales']
+            game_list_count -= 1
+            if game_list_count == 0:
+                platform_dictionary = dict(platform=name, globalSales=global_sales_count)
+                platform_dictionary_list.append(platform_dictionary)
 
-    #sort dictionaries by sales numbers for pretty graphs :).
-    platform_dictionary_li_s = sorted(platform_dictionary_li, key=lambda f: f['globalSales'])
+
+
+    # sort dictionaries by sales numbers for pretty graphs :).
+    platform_dictionary_li_s = sorted(platform_dictionary_list, key=lambda f: f['globalSales'])
 
     # assign keys to a list
     # assign data count to list
     labels = []
     data = []
     for platform in platform_dictionary_li_s:
-        labels.append(str(platform['platform']))
+        labels.append(platform['platform'])
         data.append(platform['globalSales'])
 
     # return labels and data to html for chart making
 
-    render_template('home/globalsalesbyconsole.html', labels=labels, values=data)
-
-
-
-
-
-
-
-
+    return render_template('home/globalsalesbyconsole.html', labels=labels, values=data)
