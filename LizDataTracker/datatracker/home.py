@@ -372,8 +372,9 @@ def globalsalesbyconsole():
         for game in game_list:
             global_sales_count += game['globalSales']
             game_list_count -= 1
+            int_glob = int(global_sales_count)
             if game_list_count == 0:
-                platform_dictionary = dict(platform=name, globalSales=global_sales_count)
+                platform_dictionary = dict(platform=name, globalSales=int_glob)
                 platform_dictionary_list.append(platform_dictionary)
 
     # sort dictionaries by sales numbers for pretty graphs :).
