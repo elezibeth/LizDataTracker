@@ -1,30 +1,21 @@
 {% extends 'base.html' %}
-
-
-
 {% block header %}{%endblock%}
-
 {% block content %}
-{{ error }}
-
-
 <p>Search for a game to see details.</p>
-
+<div>
   <form method="post">
     <label for="search">Enter a Game Title</label>
     <input name="search" id="search" value="{{ request.form['search'] }}" required>
     <input type="submit" value="Submit">
   </form>
+</div>
 <div>
 
   {% for word in data %}
   <div>
     {{ word }}
   </div>
-
    {% endfor %}
-
 </div>
-
 
 {%endblock%}

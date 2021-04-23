@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, redirect, flash, render_template, url
 import json, requests
 from types import SimpleNamespace
 import urllib.request
+from flask_table import Table, Col, ButtonCol
 
 bp = Blueprint('home', __name__)
 
@@ -411,3 +412,43 @@ def searchgame():
 
     else:
         return render_template('sample/postform.html', page_title="PostForm from Module Function")
+
+
+@bp.route('/searchchart')
+def presearchchart():
+    return render_template('home/searchchart.html')
+
+
+@bp.route('/searchchart', methods=('GET', 'POST'))
+def searchchart():
+    if request.method == 'POST':
+        game = request.form['searchchart']
+        if game is None:
+            render_template('home/searchchart.html')
+        if game is not None:
+            url = 'https://api.dccresource.com/api/games'
+            data = urllib.request.urlopen(url).read().decode()
+            obj = json.loads(data)
+            found_items = []
+            for s in obj:
+                if s['name'] == game:
+                    found_items.append(s)
+
+            if len(found_items) == 0:
+                return render_template('home/search.html')
+            if len(found_items) == 1:
+                for item in found_items:
+                    game_for_details = item
+                first_console = game_for_details['platform']
+                second_console = "na"
+                sales = game_for_details['globalSales']
+                global_sales = int(sales)
+                global_sales2 = 0
+                consoles = []
+                sales = []
+                consoles.append(second_console)
+                consoles.append(first_console)
+                sales.append(global_sales2)
+                sales.append(global_sales)
+
+                return render_template("home/globalsalesbyconsole.html", labels=consoles, values=sales)
