@@ -210,10 +210,10 @@ def equestion():
         }
         ct_gms_by_plt.append(ndict)
 
-    for p in ct_gms_by_plt:
+    for p in ct_gms_by_plt: # ct_gms_by_plt is a list of dictionaries
         for g in lst2013:
             if g['platform'] == p['platform']:
-                p['count'] += 1
+                p['count'] += 1 # p is the dictionary.
 
     s_ct_gms_by_plt = sorted(ct_gms_by_plt, key=lambda a: a['count'])
 
@@ -228,7 +228,7 @@ def equestion():
         st_label = str(label)
         labels.append(st_label)
 
-    return render_template("home/chart.html", labels=labels, values=values)
+    return render_template("home/equestion.html", labels=labels, values=values)
 
 
 @bp.route('/play')

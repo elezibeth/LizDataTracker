@@ -1,51 +1,64 @@
 {% extends 'base.html' %}
 
-
-
 {% block header %}{%endblock%}
 
-{% block header %}
+{% block content %}
 
-Chart.defaults.global.responsive = false;
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.js"></script>
+ <div>
+     <canvas id="lineChart" width="900" height="400"></canvas>
+ </div>
 
-var chartData = {
-labels : [{% for item in labels %}
-"{{item}}",
-{% endfor %}],
-datasets : [{
-label: '{{ legend }}',
-fill: true,
-lineTension: 0.1,
-backgroundColor: "rgba(75,192,192,0.4)",
-borderColor: "rgba(75,192,192,1)",
-borderCapStyle: 'butt',
-borderDash: [],
-borderDashOffset: 0.0,
-borderJoinStyle: 'miter',
-pointBorderColor: "rgba(75,192,192,1)",
-pointBackgroundColor: "#fff",
-pointBorderWidth: 1,
-pointHoverRadius: 5,
-pointHoverBackgroundColor: "rgba(75,192,192,1)",
-pointHoverBorderColor: "rgba(220,220,220,1)",
-pointHoverBorderWidth: 2,
-pointRadius: 1,
-pointHitRadius: 10,
-data : [{% for item in values %}
-{{item}},
-{% endfor %}],
-spanGaps: false
-}]
-}
+    <script>
+        var ctx = document.getElementById('lineChart').getContext('2d');
+        var lineChart = new Chart(ctx, {
+            type: 'line',
+            data:{
+                labels:{{ labels | safe }},
+                datasets: [
+                    {
+                        label: "Games created per Console since 2013",
+                        data: {{ values | safe }},
+                        fill: false,
+                        lineTension: 0.2
+                    }
+                ]
+             }
+        });
 
-// get chart canvas
-var ctx = document.getElementById("myChart").getContext("2d");
+    </script>
 
-// create the chart using the chart canvas
-var myChart = new Chart(ctx, {
-type: 'line',
-data: chartData,
-});
+
+
+
+<div>
+    <p>This graph would have shown how many games were released per console since 2018. </p>
+    <p>The consoles are ordered from fewest to most games released in this time. </p>
+    <p>The data here now shows games released since 2013, because this data is out of date. </p>
+    <p>Recommendation: invest in research. However, I would recommend looking at
+    marketing volumes at niche locations.</p>
+    <p>Recommendation #2: Compare this data with net profit if seeking a platform to invest in.</p>
+    <p>Much of the revenue from game marketing comes from merchandise as opposed to game sales.</p>
+</div>
+<div>
+    <div>
+<a href="{{ url_for('home.search') }}"> Search for a game to see details. </a>
+</div>
+<div>
+<a href="{{ url_for('home.searchchart') }}"> Search for a game to see the total number of games sold on that console. </a>
+</div>
+<div>
+<a href="{{ url_for('home.globalsalesbyconsole') }}"> See the total number of games sold by console/platform since 2013. </a>
+</div>
+<div>
+<p>Developer Question</p>
+</div>
+<div>
+    <p> How many games were released for each console since 2018?</p>
+</div>
+<a href="{{ url_for('home.equestion') }}"> See the answer! </a>
+
+</div>
 
 
 

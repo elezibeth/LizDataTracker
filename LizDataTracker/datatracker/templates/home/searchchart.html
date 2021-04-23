@@ -38,6 +38,25 @@
 <div>
     <p>This chart will show how many games were sold on the console it was designed for.</p>
 </div>
+<div>
+    <div>
+<a href="{{ url_for('home.search') }}"> Search for a game to see details. </a>
+</div>
+<div>
+<a href="{{ url_for('home.searchchart') }}"> Search for a game to see the total number of games sold on that console. </a>
+</div>
+<div>
+<a href="{{ url_for('home.globalsalesbyconsole') }}"> See the total number of games sold by console/platform since 2013. </a>
+</div>
+<div>
+<p>Developer Question</p>
+</div>
+<div>
+    <p> How many games were released for each console since 2018?</p>
+</div>
+<a href="{{ url_for('home.equestion') }}"> See the answer! </a>
+
+</div>
 
 {%endblock%}
 
